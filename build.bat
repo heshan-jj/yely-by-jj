@@ -1,9 +1,14 @@
 @echo off
-echo Building CoolModeTray...
+echo Stopping existing CoolModeTray instances...
+taskkill /F /IM CoolModeTray.exe >nul 2>&1
+
+echo Compiling CoolModeTray...
 C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /optimize+ /out:CoolModeTray.exe CoolModeTray.cs
 if %ERRORLEVEL% EQU 0 (
     echo [OK] Compiled successfully to CoolModeTray.exe
+    echo Starting CoolModeTray...
+    start "" "CoolModeTray.exe"
 ) else (
     echo [ERROR] Build failed.
+    pause
 )
-pause

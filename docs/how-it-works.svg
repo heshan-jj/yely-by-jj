@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="468" viewBox="0 0 920 468">
+  <title>How Yelly works</title>
+  <desc>Yelly reads CPU, GPU, memory, and power, then Autopilot decides whether CoolMode should be on. The change is a user-mode power-plan write through powrprof.dll.</desc>
+  <rect width="920" height="468" rx="18" fill="#E8E4DC"/>
+  <text x="36" y="48" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="26" font-weight="600">How Yelly works</text>
+  <text x="36" y="76" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="15">Sensors in. A power-plan change out. No kernel driver.</text>
+
+  <rect x="32" y="108" width="260" height="324" rx="14" fill="#F7F5F0" stroke="#C8C2B8"/>
+  <rect x="32" y="108" width="260" height="8" rx="4" fill="#2383E2"/>
+  <rect x="32" y="112" width="260" height="8" fill="#2383E2"/>
+  <circle cx="64" cy="156" r="16" fill="#E4F0FB"/>
+  <path d="M64 146 v8 a6 6 0 1 1 0 12 v-4" fill="none" stroke="#2383E2" stroke-width="2" stroke-linecap="round"/>
+  <text x="92" y="152" fill="#2383E2" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700">01  WATCH</text>
+  <text x="56" y="186" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="18" font-weight="600">Live telemetry</text>
+  <text x="56" y="228" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">CPU</text>
+  <text x="56" y="248" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="13">Temperature, load, and clock</text>
+  <text x="56" y="282" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">NVIDIA GPU</text>
+  <text x="56" y="302" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="13">Temperature, load, and watts</text>
+  <text x="56" y="336" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">Memory and power</text>
+  <text x="56" y="356" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="13">RAM in use, AC or battery</text>
+  <text x="56" y="398" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="12">Sparklines keep a short history</text>
+
+  <path d="M300 270 h18 l-1 0" stroke="#8A847C" stroke-width="1.5" fill="none"/>
+  <path d="M312 264 l8 6 -8 6" fill="none" stroke="#8A847C" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <rect x="330" y="108" width="260" height="324" rx="14" fill="#F7F5F0" stroke="#C8C2B8"/>
+  <rect x="330" y="108" width="260" height="8" rx="4" fill="#D9730D"/>
+  <rect x="330" y="112" width="260" height="8" fill="#D9730D"/>
+  <circle cx="362" cy="156" r="16" fill="#F8E6D4"/>
+  <path d="M356 156 h12 M362 150 v12" stroke="#D9730D" stroke-width="2" stroke-linecap="round"/>
+  <text x="390" y="152" fill="#D9730D" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700">02  DECIDE</text>
+  <text x="354" y="186" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="18" font-weight="600">Autopilot</text>
+  <text x="354" y="228" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">App rules first</text>
+  <text x="354" y="248" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="13">Forces cool or full boost</text>
+  <text x="354" y="282" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">Then battery</text>
+  <text x="354" y="302" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="13">Unplugged can force CoolMode</text>
+  <text x="354" y="336" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">Then heat</text>
+  <text x="354" y="356" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="13">On when hot, off after it cools</text>
+  <text x="354" y="398" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="12">Otherwise your manual choice stays</text>
+
+  <path d="M598 270 h18" stroke="#8A847C" stroke-width="1.5" fill="none"/>
+  <path d="M610 264 l8 6 -8 6" fill="none" stroke="#8A847C" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <rect x="628" y="108" width="260" height="324" rx="14" fill="#F7F5F0" stroke="#C8C2B8"/>
+  <rect x="628" y="108" width="260" height="8" rx="4" fill="#0F7B6C"/>
+  <rect x="628" y="112" width="260" height="8" fill="#0F7B6C"/>
+  <circle cx="660" cy="156" r="16" fill="#DCEEEA"/>
+  <path d="M654 156 h12" stroke="#0F7B6C" stroke-width="2" stroke-linecap="round"/>
+  <text x="688" y="152" fill="#0F7B6C" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700">03  APPLY</text>
+  <text x="652" y="186" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="18" font-weight="600">Power plan</text>
+  <text x="652" y="228" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">Boost mode</text>
+  <text x="652" y="248" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="13">Locked off, or restored</text>
+  <text x="652" y="282" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">Processor cap</text>
+  <text x="652" y="302" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="13">99% while cool, 100% at full</text>
+  <text x="652" y="336" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">User mode only</text>
+  <text x="652" y="356" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="13">powrprof.dll, no Ring-0 driver</text>
+  <text x="652" y="398" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="12">AC and DC are written together</text>
+</svg>

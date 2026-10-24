@@ -6,12 +6,30 @@
 
 A zero-dependency, lightweight Windows desktop & system tray utility that replicates the core functionality of **Outbyte Camomile**'s "CoolMode" and live temperature monitoring without bloat, kernel drivers, telemetry, or background services.
 
-Includes a Notion-themed desktop dashboard, comprehensive hardware telemetry with live sparklines, and an intelligent Autopilot engine.
+Includes a desktop dashboard, live hardware telemetry with sparklines, and an Autopilot engine that can switch power states for you.
+
+## At a glance
+
+<p align="center">
+  <img src="docs/how-it-works.svg" alt="How Yelly works: watch telemetry, decide with Autopilot, apply a power-plan change" width="920" />
+</p>
+
+<p align="center">
+  <img src="docs/modes.svg" alt="CoolMode caps the processor at 99 percent with boost off. Full performance restores boost and a 100 percent cap." width="920" />
+</p>
+
+<p align="center">
+  <img src="docs/autopilot.svg" alt="Autopilot checks a running app, then battery, then CPU heat. The first match wins." width="920" />
+</p>
+
+<p align="center">
+  <img src="docs/tray.svg" alt="Tray icon colors: blue is CoolMode, amber is full boost, red is a thermal alert." width="920" />
+</p>
 
 ## Features
 
 - **Branded & Notion-Themed UI**:
-  - Distinctive Yelly typography branding, custom window controls, and clean slate/ivory Notion light aesthetics.
+  - Distinctive Yelly branding, custom window controls, and a warm stone light theme.
   - Interactive navigation: **Dashboard**, **Autopilot**, and **Settings**.
   - One-click hero action card to instantly toggle CoolMode.
 
@@ -26,7 +44,7 @@ Includes a Notion-themed desktop dashboard, comprehensive hardware telemetry wit
   - Thermal trigger: Optional automatic CoolMode engagement when temperatures exceed configurable threshold (with hysteresis).
 
 - **System Tray Integration**:
-  - Live 2-digit temperature rendering directly inside the system tray icon (Cyan = CoolMode, Amber = Normal, Red = Thermal Alert).
+  - Live 2-digit temperature rendering directly inside the system tray icon (blue = CoolMode, amber = full performance, red = thermal alert).
   - Quick-action context menu with live temps, toggle shortcut, dashboard launcher, and startup toggle.
 
 - **Zero External Dependencies**:

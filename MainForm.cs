@@ -8,11 +8,11 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace CoolModeTray
+namespace Yelly
 {
     internal class MainForm : Form
     {
-        private readonly CoolModeContext _context;
+        private readonly YellyContext _context;
         private int _selectedNav = 0; // 0 = Dashboard, 1 = Autopilot, 2 = Settings
 
         private Rectangle _closeBtnRect;
@@ -42,7 +42,7 @@ namespace CoolModeTray
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
-        public MainForm(CoolModeContext context)
+        public MainForm(YellyContext context)
         {
             _context = context;
             this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer | ControlStyles.OptimizedDoubleBuffer, true);
@@ -52,7 +52,15 @@ namespace CoolModeTray
             this.Size = new Size(680, 500);
             this.BackColor = T.Bg;
             this.ShowInTaskbar = true;
-            this.Text = "CoolMode";
+            this.Text = "Yelly";
+            try
+            {
+                if (File.Exists("Yelly.ico"))
+                    this.Icon = new Icon("Yelly.ico");
+                else
+                    this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            }
+            catch { }
 
             _closeBtnRect = new Rectangle(this.Width - 36, 10, 26, 26);
             _minBtnRect = new Rectangle(this.Width - 66, 10, 26, 26);
@@ -269,7 +277,16 @@ namespace CoolModeTray
             Ui.Line(g, T.Border, sideW, 0, sideW, this.Height);
 
             // Workspace Header
-            Ui.Text(g, "❄  CoolMode", T.F(10.5f, true), T.Text, 16, 20);
+            if (Ui.Logo != null)
+            {
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(Ui.Logo, new Rectangle(16, 17, 22, 22));
+                Ui.Text(g, "Yelly", T.F(11.5f, true), T.Text, 44, 18);
+            }
+            else
+            {
+                Ui.Text(g, "Yelly", T.F(11.5f, true), T.Text, 16, 18);
+            }
 
             // Nav Items
             DrawNavItem(g, _nav0Rect, "📊  Dashboard", _selectedNav == 0);
@@ -335,8 +352,17 @@ namespace CoolModeTray
         private void DrawDashboardPage(Graphics g, int x, int w)
         {
             // Notion Page Title
-            Ui.Text(g, "❄️", T.F(20f, false), T.Text, x, 22);
-            Ui.Text(g, "System Performance & Cooling", T.F(16f, true), T.Text, x, 56);
+            if (Ui.Logo != null)
+            {
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(Ui.Logo, new Rectangle(x, 20, 30, 30));
+                Ui.Text(g, "System Performance & Cooling", T.F(16f, true), T.Text, x, 56);
+            }
+            else
+            {
+                Ui.Text(g, "❄️", T.F(20f, false), T.Text, x, 22);
+                Ui.Text(g, "System Performance & Cooling", T.F(16f, true), T.Text, x, 56);
+            }
 
             // Status Properties Header
             int propY = 92;

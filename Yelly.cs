@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace CoolModeTray
+namespace Yelly
 {
     static class Program
     {
@@ -34,7 +34,7 @@ namespace CoolModeTray
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 
             bool createdNew;
-            _appMutex = new Mutex(true, "Local\\CoolModeTray_SingleInstance_Mutex", out createdNew);
+            _appMutex = new Mutex(true, "Local\\Yelly_SingleInstance_Mutex", out createdNew);
 
             if (!createdNew)
             {
@@ -53,11 +53,11 @@ namespace CoolModeTray
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new CoolModeContext());
+            Application.Run(new YellyContext());
         }
     }
 
-    internal class CoolModeContext : ApplicationContext
+    internal class YellyContext : ApplicationContext
     {
         public readonly Settings Settings;
         public readonly Telemetry Telemetry;
@@ -80,7 +80,7 @@ namespace CoolModeTray
 
         public bool IsCoolMode { get { return _isCoolMode; } }
 
-        public CoolModeContext()
+        public YellyContext()
         {
             Settings = Settings.Load();
             Telemetry = new Telemetry(false);
@@ -97,13 +97,13 @@ namespace CoolModeTray
             _tempItem.Enabled = false;
             _tempItem.Font = new Font(_tempItem.Font, FontStyle.Bold);
 
-            _dashboardItem = new ToolStripMenuItem("Open Dashboard", null, (s, e) => ShowDashboard());
+            _dashboardItem = new ToolStripMenuItem("Open Yelly Dashboard", null, (s, e) => ShowDashboard());
             _toggleItem = new ToolStripMenuItem("Toggle CoolMode", null, (s, e) => ToggleCoolMode());
 
             _autostartItem = new ToolStripMenuItem("Start with Windows", null, (s, e) => ToggleAutostart());
             _autostartItem.Checked = Startup.IsOn();
 
-            var exitItem = new ToolStripMenuItem("Exit", null, (s, e) => Exit());
+            var exitItem = new ToolStripMenuItem("Exit Yelly", null, (s, e) => Exit());
 
             _menu.Items.Add(_tempItem);
             _menu.Items.Add(new ToolStripSeparator());
@@ -211,7 +211,7 @@ namespace CoolModeTray
             _tempItem.Text = tempSummary;
             _toggleItem.Text = _isCoolMode ? "[✓] CoolMode (Active)" : "Enable CoolMode";
 
-            string tooltip = (_isCoolMode ? "CoolMode: ACTIVE\n" : "CoolMode: OFF\n") + tempSummary;
+            string tooltip = "Yelly - " + (_isCoolMode ? "CoolMode" : "Turbo Boost") + "\n" + tempSummary;
             if (tooltip.Length > 63) tooltip = tooltip.Substring(0, 63);
             _trayIcon.Text = tooltip;
 
@@ -244,20 +244,37 @@ namespace CoolModeTray
                     g.FillRectangle(brush, 0, 0, 16, 16);
                 }
 
-                string label = Settings.TrayTemp && temp > 0 && temp < 100
-                    ? temp.ToString()
-                    : (cool ? "C" : "N");
-                float fontSize = label.Length >= 2 ? 7.0f : 8.5f;
-
-                using (var textBrush = new SolidBrush(Color.White))
-                using (var font = new Font("Tahoma", fontSize, FontStyle.Bold))
+                if (Settings.TrayTemp && temp > 0 && temp < 100)
                 {
-                    var format = new StringFormat
+                    string label = temp.ToString();
+                    float fontSize = label.Length >= 2 ? 7.0f : 8.5f;
+
+                    using (var textBrush = new SolidBrush(Color.White))
+                    using (var font = new Font("Tahoma", fontSize, FontStyle.Bold))
                     {
-                        Alignment = StringAlignment.Center,
-                        LineAlignment = StringAlignment.Center
-                    };
-                    g.DrawString(label, font, textBrush, new RectangleF(-1, 0, 18, 16), format);
+                        var format = new StringFormat
+                        {
+                            Alignment = StringAlignment.Center,
+                            LineAlignment = StringAlignment.Center
+                        };
+                        g.DrawString(label, font, textBrush, new RectangleF(-1, 0, 18, 16), format);
+                    }
+                }
+                else
+                {
+                    if (Ui.Logo != null)
+                    {
+                        g.DrawImage(Ui.Logo, new Rectangle(1, 1, 14, 14));
+                    }
+                    else
+                    {
+                        using (var textBrush = new SolidBrush(Color.White))
+                        using (var font = new Font("Tahoma", 8.5f, FontStyle.Bold))
+                        {
+                            var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+                            g.DrawString("Y", font, textBrush, new RectangleF(-1, 0, 18, 16), format);
+                        }
+                    }
                 }
 
                 IntPtr hIcon = bmp.GetHicon();

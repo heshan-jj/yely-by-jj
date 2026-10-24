@@ -1,4 +1,8 @@
-# CoolModeTray
+# Yelly
+
+<p align="center">
+  <img src="Yelly.png" width="128" alt="Yelly Logo" />
+</p>
 
 A zero-dependency, lightweight Windows desktop & system tray utility that replicates the core functionality of **Outbyte Camomile**'s "CoolMode" and live temperature monitoring without bloat, kernel drivers, telemetry, or background services.
 
@@ -6,8 +10,8 @@ Includes a Notion-themed desktop dashboard, comprehensive hardware telemetry wit
 
 ## Features
 
-- **Notion-Themed Dashboard**:
-  - Clean, slate & ivory Notion light aesthetic with responsive layout, callout cards, breadcrumb property pills, and custom window chrome.
+- **Branded & Notion-Themed UI**:
+  - Distinctive Yelly typography branding, custom window controls, and clean slate/ivory Notion light aesthetics.
   - Interactive navigation: **Dashboard**, **Autopilot**, and **Settings**.
   - One-click hero action card to instantly toggle CoolMode.
 
@@ -26,11 +30,11 @@ Includes a Notion-themed desktop dashboard, comprehensive hardware telemetry wit
   - Quick-action context menu with live temps, toggle shortcut, dashboard launcher, and startup toggle.
 
 - **Zero External Dependencies**:
-  - Written in pure C# using Windows .NET 4.x WinForms and GDI+. Compiles directly with Windows' built-in `csc.exe` in under 2 seconds.
+  - Written in pure C# using Windows .NET 4.x WinForms and GDI+. Embedded Win32 `.ico` and in-app logo resource. Compiles directly with Windows' built-in `csc.exe` in under 2 seconds.
 
 ## Building & Running
 
 Run [build.bat](file:///d:/Code/Projects/yely%20by%20jj/build.bat) or compile with Windows' built-in C# compiler:
 ```cmd
-C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /optimize+ /out:CoolModeTray.exe Ui.cs Settings.cs Telemetry.cs Autopilot.cs MainForm.cs CoolModeTray.cs
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /optimize+ /win32icon:Yelly.ico /resource:Yelly.png /out:Yelly.exe Ui.cs Settings.cs Telemetry.cs Autopilot.cs MainForm.cs Yelly.cs
 ```

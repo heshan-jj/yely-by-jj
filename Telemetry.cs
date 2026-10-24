@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
-namespace CoolModeTray
+namespace Yelly
 {
     /// <summary>Fixed-size ring of the latest samples, used for sparklines.</summary>
     class Hist

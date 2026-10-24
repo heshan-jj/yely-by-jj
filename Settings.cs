@@ -5,7 +5,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
-namespace CoolModeTray
+namespace Yelly
 {
     class Rule
     {
@@ -37,7 +37,17 @@ namespace CoolModeTray
         {
             get
             {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CoolModeTray", "settings.ini");
+                string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Yelly");
+                string file = Path.Combine(dir, "settings.ini");
+                if (!File.Exists(file))
+                {
+                    string old = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CoolModeTray", "settings.ini");
+                    if (File.Exists(old))
+                    {
+                        try { Directory.CreateDirectory(dir); File.Copy(old, file, true); } catch { }
+                    }
+                }
+                return file;
             }
         }
 
@@ -137,7 +147,7 @@ namespace CoolModeTray
         public static bool IsOn()
         {
             using (var k = Registry.CurrentUser.OpenSubKey(Key, false))
-                return k != null && k.GetValue("CoolModeTray") != null;
+                return k != null && (k.GetValue("Yelly") != null || k.GetValue("CoolModeTray") != null);
         }
 
         public static void Set(bool on)
@@ -145,8 +155,9 @@ namespace CoolModeTray
             using (var k = Registry.CurrentUser.OpenSubKey(Key, true))
             {
                 if (k == null) return;
-                if (on) k.SetValue("CoolModeTray", "\"" + System.Windows.Forms.Application.ExecutablePath + "\"");
-                else k.DeleteValue("CoolModeTray", false);
+                k.DeleteValue("CoolModeTray", false);
+                if (on) k.SetValue("Yelly", "\"" + System.Windows.Forms.Application.ExecutablePath + "\"");
+                else k.DeleteValue("Yelly", false);
             }
         }
     }

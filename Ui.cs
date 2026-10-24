@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using System.IO;
 using System.Windows.Forms;
 
-namespace CoolModeTray
+namespace Yelly
 {
     struct TagColor
     {
@@ -161,6 +162,31 @@ namespace CoolModeTray
         public static string Temp(Settings cfg, int celsius)
         {
             return (cfg.Fahrenheit ? (int)Math.Round(celsius * 9.0 / 5.0 + 32) : celsius) + (cfg.Fahrenheit ? "\u00B0F" : "\u00B0C");
+        }
+
+        private static Image _logo;
+        public static Image Logo
+        {
+            get
+            {
+                if (_logo == null)
+                {
+                    try
+                    {
+                        var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Yelly.png");
+                        if (stream != null)
+                        {
+                            _logo = Image.FromStream(stream);
+                        }
+                        else if (File.Exists("Yelly.png"))
+                        {
+                            _logo = Image.FromFile("Yelly.png");
+                        }
+                    }
+                    catch { }
+                }
+                return _logo;
+            }
         }
 
         public static Icon AppIcon()

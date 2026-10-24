@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
-namespace CoolModeTray
+namespace Yelly
 {
     public enum TriggerReason
     {

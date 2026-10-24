@@ -93,9 +93,10 @@ namespace Yelly
 
             // Tray Menu
             _menu = new ContextMenuStrip();
+            _menu.Font = T.F(9f, false);
             _tempItem = new ToolStripMenuItem("CPU: --", null, (s, e) => ShowDashboard());
             _tempItem.Enabled = false;
-            _tempItem.Font = new Font(_tempItem.Font, FontStyle.Bold);
+            _tempItem.Font = T.F(9f, true);
 
             _dashboardItem = new ToolStripMenuItem("Open Yelly Dashboard", null, (s, e) => ShowDashboard());
             _toggleItem = new ToolStripMenuItem("Toggle CoolMode", null, (s, e) => ToggleCoolMode());
@@ -225,68 +226,72 @@ namespace Yelly
 
         private void UpdateTrayIcon(bool cool, int temp)
         {
-            using (var bmp = new Bitmap(16, 16))
-            using (var g = Graphics.FromImage(bmp))
+            Color bg;
+            if (temp >= Settings.Alert)
+                bg = T.Red;
+            else if (cool)
+                bg = T.Accent;
+            else
+                bg = T.Orange;
+
+            string label = null;
+            bool logo = false;
+            if (Settings.TrayTemp && temp > 0 && temp < 100)
+                label = temp.ToString();
+            else if (Ui.Logo != null)
+                logo = true;
+            else
+                label = "Y";
+
+            using (var bmp = RenderTrayBitmap(32, bg, label, logo))
+            {
+                IntPtr hIcon = bmp.GetHicon();
+                _trayIcon.Icon = Icon.FromHandle(hIcon);
+                if (_lastHIcon != IntPtr.Zero)
+                    DestroyIcon(_lastHIcon);
+                _lastHIcon = hIcon;
+            }
+        }
+
+        /// <summary>Draws the tray glyph at 4x and scales it down so the digits stay smooth.</summary>
+        private static Bitmap RenderTrayBitmap(int size, Color bg, string label, bool logo)
+        {
+            int big = size * 4;
+            using (var hi = new Bitmap(big, big, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+            using (var g = Graphics.FromImage(hi))
             {
                 g.SmoothingMode = SmoothingMode.AntiAlias;
-                g.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                g.Clear(bg);
 
-                Color bg;
-                if (temp >= Settings.Alert)
-                    bg = T.Red;
-                else if (cool)
-                    bg = T.Accent;
-                else
-                    bg = T.Orange;
-
-                using (var brush = new SolidBrush(bg))
+                if (logo && Ui.Logo != null)
                 {
-                    g.FillRectangle(brush, 0, 0, 16, 16);
+                    int margin = (int)(big * 0.14f);
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.DrawImage(Ui.Logo, new Rectangle(margin, margin, big - margin * 2, big - margin * 2));
+                }
+                else if (!string.IsNullOrEmpty(label))
+                {
+                    float px = (label.Length >= 2 ? 0.62f : 0.72f) * big;
+                    Font font;
+                    try { font = new Font("Google Sans", px, FontStyle.Bold, GraphicsUnit.Pixel); }
+                    catch (ArgumentException) { font = new Font("Segoe UI", px, FontStyle.Bold, GraphicsUnit.Pixel); }
+                    using (font)
+                    using (var brush = new SolidBrush(Color.White))
+                    using (var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                        g.DrawString(label, font, brush, new RectangleF(0, 0, big, big), format);
                 }
 
-                if (Settings.TrayTemp && temp > 0 && temp < 100)
+                var small = new Bitmap(size, size, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                using (var down = Graphics.FromImage(small))
                 {
-                    string label = temp.ToString();
-                    float fontSize = label.Length >= 2 ? 7.0f : 8.5f;
-
-                    using (var textBrush = new SolidBrush(Color.White))
-                    using (var font = new Font("Tahoma", fontSize, FontStyle.Bold))
-                    {
-                        var format = new StringFormat
-                        {
-                            Alignment = StringAlignment.Center,
-                            LineAlignment = StringAlignment.Center
-                        };
-                        g.DrawString(label, font, textBrush, new RectangleF(-1, 0, 18, 16), format);
-                    }
+                    down.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    down.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    down.CompositingQuality = CompositingQuality.HighQuality;
+                    down.DrawImage(hi, new Rectangle(0, 0, size, size));
                 }
-                else
-                {
-                    if (Ui.Logo != null)
-                    {
-                        g.DrawImage(Ui.Logo, new Rectangle(1, 1, 14, 14));
-                    }
-                    else
-                    {
-                        using (var textBrush = new SolidBrush(Color.White))
-                        using (var font = new Font("Tahoma", 8.5f, FontStyle.Bold))
-                        {
-                            var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-                            g.DrawString("Y", font, textBrush, new RectangleF(-1, 0, 18, 16), format);
-                        }
-                    }
-                }
-
-                IntPtr hIcon = bmp.GetHicon();
-                Icon newIcon = Icon.FromHandle(hIcon);
-
-                _trayIcon.Icon = newIcon;
-
-                if (_lastHIcon != IntPtr.Zero)
-                {
-                    DestroyIcon(_lastHIcon);
-                }
-                _lastHIcon = hIcon;
+                return small;
             }
         }
 

@@ -1,5 +1,5 @@
 #define MyAppName "Yelly"
-#define MyAppVersion "1.3.0"
+#define MyAppVersion "1.4.0"
 #define MyAppPublisher "Heshan Jayakody"
 #define MyAppURL "https://github.com/heshan-jj/yely-by-jj"
 #define MyAppExeName "Yelly.exe"

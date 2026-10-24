@@ -39,13 +39,12 @@ namespace CoolModeTray
 
             if (!createdNew)
             {
-                // Already running: activate existing window
                 Process current = Process.GetCurrentProcess();
                 foreach (Process p in Process.GetProcessesByName(current.ProcessName))
                 {
                     if (p.Id != current.Id && p.MainWindowHandle != IntPtr.Zero)
                     {
-                        ShowWindow(p.MainWindowHandle, 9); // SW_RESTORE
+                        ShowWindow(p.MainWindowHandle, 9);
                         SetForegroundWindow(p.MainWindowHandle);
                         break;
                     }
@@ -80,7 +79,6 @@ namespace CoolModeTray
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern bool DestroyIcon(IntPtr handle);
 
-        // Windows Power Settings GUIDs
         private static readonly Guid SubGroupCpu = new Guid("54533251-82be-4824-96c1-47b60b740d00");
         private static readonly Guid SettingPerfBoost = new Guid("be337238-0d82-4146-a960-4f3749d470c7");
         private static readonly Guid SettingMaxThrottle = new Guid("bc5038f7-23e0-4960-96da-33abaf5935ec");
@@ -140,14 +138,13 @@ namespace CoolModeTray
             _isCoolMode = ReadCurrentIsCoolMode();
 
             _timer = new System.Windows.Forms.Timer();
-            _timer.Interval = 1500;
+            _timer.Interval = 1200;
             _timer.Tick += (s, e) => RefreshTelemetry();
             _timer.Start();
 
             RefreshTelemetry();
             UpdateUi();
 
-            // Show dashboard on first launch so user sees the app running
             ShowDashboard();
         }
 
@@ -416,99 +413,91 @@ namespace CoolModeTray
     public class MainForm : Form
     {
         private readonly CoolModeContext _context;
-        private Label _lblStatus;
-        private Label _lblCpu;
-        private Label _lblGpu;
-        private Button _btnToggle;
-        private CheckBox _chkAutostart;
+        private bool _isCoolMode;
+        private int _cpuTemp = -1;
+        private int _gpuTemp = -1;
+
+        private Rectangle _closeBtnRect;
+        private Rectangle _minBtnRect;
+        private Rectangle _toggleBtnRect;
+        private Rectangle _autostartRect;
+        private bool _closeHover;
+        private bool _minHover;
+        private bool _toggleHover;
+
+        [DllImport("user32.dll")]
+        public static extern bool ReleaseCapture();
+
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
         public MainForm(CoolModeContext context)
         {
             _context = context;
-            InitializeComponent();
-        }
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer | ControlStyles.OptimizedDoubleBuffer, true);
 
-        private void InitializeComponent()
-        {
-            this.Text = "CoolMode Dashboard";
-            this.Size = new Size(360, 260);
-            this.FormBorderStyle = FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
+            this.FormBorderStyle = FormBorderStyle.None;
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.BackColor = Color.FromArgb(245, 247, 250);
+            this.Size = new Size(380, 420);
+            this.BackColor = Color.FromArgb(18, 21, 28); // Deep obsidian slate
+            this.ShowInTaskbar = true;
+            this.Text = "CoolMode Dashboard";
 
-            _lblStatus = new Label
+            _closeBtnRect = new Rectangle(340, 12, 28, 26);
+            _minBtnRect = new Rectangle(308, 12, 28, 26);
+            _toggleBtnRect = new Rectangle(24, 290, 332, 54);
+            _autostartRect = new Rectangle(24, 362, 170, 24);
+
+            this.MouseDown += (s, e) =>
             {
-                Location = new Point(20, 20),
-                Size = new Size(300, 32),
-                Font = new Font("Segoe UI", 13f, FontStyle.Bold),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-
-            var pnlMetrics = new Panel
-            {
-                Location = new Point(20, 65),
-                Size = new Size(305, 65),
-                BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle
-            };
-
-            _lblCpu = new Label
-            {
-                Location = new Point(10, 15),
-                Size = new Size(140, 35),
-                Font = new Font("Segoe UI", 12f, FontStyle.Bold),
-                Text = "CPU: --°C",
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-
-            _lblGpu = new Label
-            {
-                Location = new Point(155, 15),
-                Size = new Size(140, 35),
-                Font = new Font("Segoe UI", 12f, FontStyle.Bold),
-                Text = "GPU: --°C",
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-
-            pnlMetrics.Controls.Add(_lblCpu);
-            pnlMetrics.Controls.Add(_lblGpu);
-
-            _btnToggle = new Button
-            {
-                Location = new Point(20, 145),
-                Size = new Size(305, 42),
-                Font = new Font("Segoe UI", 11f, FontStyle.Bold),
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            _btnToggle.Click += (s, e) => _context.ToggleCoolMode();
-
-            _chkAutostart = new CheckBox
-            {
-                Text = "Start with Windows",
-                Location = new Point(25, 195),
-                Size = new Size(180, 22),
-                Font = new Font("Segoe UI", 9f),
-                Checked = CoolModeContext.IsAutostartEnabled()
-            };
-            _chkAutostart.CheckedChanged += (s, e) =>
-            {
-                if (_chkAutostart.Checked != CoolModeContext.IsAutostartEnabled())
-                    _context.ToggleAutostart();
-            };
-
-            this.Controls.Add(_lblStatus);
-            this.Controls.Add(pnlMetrics);
-            this.Controls.Add(_btnToggle);
-            this.Controls.Add(_chkAutostart);
-
-            this.FormClosing += (s, e) =>
-            {
-                if (e.CloseReason == CloseReason.UserClosing)
+                if (e.Button == MouseButtons.Left && e.Y <= 45 && !_closeBtnRect.Contains(e.Location) && !_minBtnRect.Contains(e.Location))
                 {
-                    e.Cancel = true;
-                    this.Hide();
+                    ReleaseCapture();
+                    SendMessage(this.Handle, 0xA1, 0x2, 0);
+                }
+            };
+
+            this.MouseMove += (s, e) =>
+            {
+                bool ch = _closeBtnRect.Contains(e.Location);
+                bool mh = _minBtnRect.Contains(e.Location);
+                bool th = _toggleBtnRect.Contains(e.Location);
+
+                if (ch != _closeHover || mh != _minHover || th != _toggleHover)
+                {
+                    _closeHover = ch;
+                    _minHover = mh;
+                    _toggleHover = th;
+                    this.Invalidate();
+                }
+
+                if (th || ch || mh || _autostartRect.Contains(e.Location))
+                    this.Cursor = Cursors.Hand;
+                else
+                    this.Cursor = Cursors.Default;
+            };
+
+            this.MouseClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    if (_closeBtnRect.Contains(e.Location))
+                    {
+                        this.Hide();
+                    }
+                    else if (_minBtnRect.Contains(e.Location))
+                    {
+                        this.WindowState = FormWindowState.Minimized;
+                    }
+                    else if (_toggleBtnRect.Contains(e.Location))
+                    {
+                        _context.ToggleCoolMode();
+                    }
+                    else if (_autostartRect.Contains(e.Location))
+                    {
+                        _context.ToggleAutostart();
+                        this.Invalidate(_autostartRect);
+                    }
                 }
             };
         }
@@ -521,28 +510,252 @@ namespace CoolModeTray
                 return;
             }
 
-            if (isCool)
+            _isCoolMode = isCool;
+            _cpuTemp = cpuTemp;
+            _gpuTemp = gpuTemp;
+            this.Invalidate();
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            Graphics g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+
+            // 1. Outer subtle border
+            using (var borderPen = new Pen(Color.FromArgb(40, 48, 62), 1f))
             {
-                _lblStatus.Text = "❄️ CoolMode: ACTIVE";
-                _lblStatus.ForeColor = Color.FromArgb(0, 120, 200);
-                _btnToggle.Text = "Turn CoolMode OFF (Full Boost)";
-                _btnToggle.BackColor = Color.FromArgb(230, 240, 250);
-                _btnToggle.ForeColor = Color.FromArgb(0, 100, 180);
+                g.DrawRectangle(borderPen, 0, 0, this.Width - 1, this.Height - 1);
             }
+
+            // 2. Custom Title Bar
+            using (var titleFont = new Font("Segoe UI", 10.5f, FontStyle.Bold))
+            using (var titleBrush = new SolidBrush(Color.FromArgb(240, 244, 248)))
+            {
+                g.DrawString("❄  CoolMode", titleFont, titleBrush, 22, 16);
+            }
+
+            // Minimize Button
+            if (_minHover)
+            {
+                using (var hb = new SolidBrush(Color.FromArgb(35, 42, 54)))
+                {
+                    g.FillRectangle(hb, _minBtnRect);
+                }
+            }
+            using (var minPen = new Pen(Color.FromArgb(180, 190, 205), 1.5f))
+            {
+                g.DrawLine(minPen, _minBtnRect.X + 8, _minBtnRect.Y + 14, _minBtnRect.X + 20, _minBtnRect.Y + 14);
+            }
+
+            // Close Button
+            if (_closeHover)
+            {
+                using (var hb = new SolidBrush(Color.FromArgb(220, 50, 50)))
+                {
+                    g.FillRectangle(hb, _closeBtnRect);
+                }
+            }
+            using (var closePen = new Pen(_closeHover ? Color.White : Color.FromArgb(180, 190, 205), 1.5f))
+            {
+                g.DrawLine(closePen, _closeBtnRect.X + 9, _closeBtnRect.Y + 8, _closeBtnRect.X + 19, _closeBtnRect.Y + 18);
+                g.DrawLine(closePen, _closeBtnRect.X + 19, _closeBtnRect.Y + 8, _closeBtnRect.X + 9, _closeBtnRect.Y + 18);
+            }
+
+            // 3. Status Hero Banner
+            Rectangle bannerRect = new Rectangle(24, 55, 332, 68);
+            Color bannerBg = _isCoolMode ? Color.FromArgb(12, 38, 64) : Color.FromArgb(38, 25, 16);
+            Color bannerBorder = _isCoolMode ? Color.FromArgb(2, 132, 199) : Color.FromArgb(217, 119, 6);
+
+            using (var path = GetRoundedPath(bannerRect, 10))
+            {
+                using (var bb = new SolidBrush(bannerBg))
+                {
+                    g.FillPath(bb, path);
+                }
+                using (var bp = new Pen(bannerBorder, 1.2f))
+                {
+                    g.DrawPath(bp, path);
+                }
+            }
+
+            // Status Text
+            string statusTitle = _isCoolMode ? "❄  COOLMODE ACTIVE" : "⚡  TURBO BOOST ON";
+            Color statusColor = _isCoolMode ? Color.FromArgb(56, 189, 248) : Color.FromArgb(251, 146, 60);
+            using (var font = new Font("Segoe UI", 12f, FontStyle.Bold))
+            using (var brush = new SolidBrush(statusColor))
+            {
+                g.DrawString(statusTitle, font, brush, bannerRect.X + 16, bannerRect.Y + 14);
+            }
+
+            string statusSub = _isCoolMode
+                ? "CPU Boost Disabled (99% Cap) • Low Temps & Silent Fans"
+                : "Full Performance Active • Maximum Single-Core Clocks";
+            using (var font = new Font("Segoe UI", 8.5f))
+            using (var brush = new SolidBrush(Color.FromArgb(148, 163, 184)))
+            {
+                g.DrawString(statusSub, font, brush, bannerRect.X + 16, bannerRect.Y + 40);
+            }
+
+            // 4. Two Hardware Sensor Cards
+            DrawCard(g, new Rectangle(24, 138, 160, 134), "CPU THERMAL", _cpuTemp, "ACPI Thermal Zone");
+            DrawCard(g, new Rectangle(196, 138, 160, 134), "NVIDIA GPU", _gpuTemp, "GeForce RTX 2050");
+
+            // 5. Hero Action Button
+            using (var path = GetRoundedPath(_toggleBtnRect, 12))
+            {
+                Color btnStart, btnEnd;
+                if (_isCoolMode)
+                {
+                    btnStart = _toggleHover ? Color.FromArgb(30, 41, 59) : Color.FromArgb(24, 32, 47);
+                    btnEnd = _toggleHover ? Color.FromArgb(40, 52, 72) : Color.FromArgb(30, 41, 59);
+                }
+                else
+                {
+                    btnStart = _toggleHover ? Color.FromArgb(14, 165, 233) : Color.FromArgb(2, 132, 199);
+                    btnEnd = _toggleHover ? Color.FromArgb(2, 132, 199) : Color.FromArgb(3, 105, 161);
+                }
+
+                using (var brush = new LinearGradientBrush(_toggleBtnRect, btnStart, btnEnd, 90f))
+                {
+                    g.FillPath(brush, path);
+                }
+
+                Color outlineColor = _isCoolMode
+                    ? (_toggleHover ? Color.FromArgb(71, 85, 105) : Color.FromArgb(51, 65, 85))
+                    : (_toggleHover ? Color.FromArgb(125, 211, 252) : Color.FromArgb(56, 189, 248));
+                using (var pen = new Pen(outlineColor, 1.2f))
+                {
+                    g.DrawPath(pen, path);
+                }
+            }
+
+            string btnText = _isCoolMode ? "Turn CoolMode OFF (Full Boost)" : "❄  Activate CoolMode";
+            Color btnTextColor = _isCoolMode ? Color.FromArgb(226, 232, 240) : Color.White;
+            using (var font = new Font("Segoe UI", 11f, FontStyle.Bold))
+            using (var brush = new SolidBrush(btnTextColor))
+            {
+                var sf = new StringFormat
+                {
+                    Alignment = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center
+                };
+                g.DrawString(btnText, font, brush, _toggleBtnRect, sf);
+            }
+
+            // 6. Footer: Start with Windows & Tray hint
+            bool autostart = CoolModeContext.IsAutostartEnabled();
+            Rectangle boxRect = new Rectangle(_autostartRect.X, _autostartRect.Y + 4, 14, 14);
+            using (var pen = new Pen(Color.FromArgb(100, 116, 139), 1.2f))
+            {
+                g.DrawRectangle(pen, boxRect);
+            }
+            if (autostart)
+            {
+                using (var cb = new SolidBrush(Color.FromArgb(56, 189, 248)))
+                {
+                    g.FillRectangle(cb, boxRect.X + 2, boxRect.Y + 2, 10, 10);
+                }
+            }
+            using (var font = new Font("Segoe UI", 8.5f))
+            using (var brush = new SolidBrush(Color.FromArgb(160, 174, 192)))
+            {
+                g.DrawString("Start with Windows", font, brush, _autostartRect.X + 22, _autostartRect.Y + 2);
+            }
+
+            using (var font = new Font("Segoe UI", 8f))
+            using (var brush = new SolidBrush(Color.FromArgb(100, 116, 139)))
+            {
+                var sf = new StringFormat { Alignment = StringAlignment.Far };
+                g.DrawString("Minimizes to tray on close", font, brush, 356, _autostartRect.Y + 3, sf);
+            }
+        }
+
+        private void DrawCard(Graphics g, Rectangle rect, string title, int temp, string subtitle)
+        {
+            using (var path = GetRoundedPath(rect, 10))
+            {
+                using (var brush = new SolidBrush(Color.FromArgb(25, 30, 40)))
+                {
+                    g.FillPath(brush, path);
+                }
+                using (var pen = new Pen(Color.FromArgb(38, 46, 60), 1f))
+                {
+                    g.DrawPath(pen, path);
+                }
+            }
+
+            // Card Title
+            using (var font = new Font("Segoe UI", 7.5f, FontStyle.Bold))
+            using (var brush = new SolidBrush(Color.FromArgb(148, 163, 184)))
+            {
+                g.DrawString(title, font, brush, rect.X + 14, rect.Y + 14);
+            }
+
+            // Temp Value & Color
+            string tempStr = temp > 0 ? temp.ToString() : "--";
+            Color tempColor;
+            if (temp >= 85)
+                tempColor = Color.FromArgb(244, 63, 94);   // Hot Red
+            else if (temp >= 70)
+                tempColor = Color.FromArgb(251, 146, 60);  // Warm Orange
+            else if (temp > 0)
+                tempColor = Color.FromArgb(56, 189, 248);  // Cool Blue
             else
+                tempColor = Color.FromArgb(100, 116, 139);
+
+            using (var font = new Font("Segoe UI", 26f, FontStyle.Bold))
+            using (var brush = new SolidBrush(tempColor))
             {
-                _lblStatus.Text = "⚡ Normal Mode (Boost ON)";
-                _lblStatus.ForeColor = Color.FromArgb(210, 100, 10);
-                _btnToggle.Text = "Turn CoolMode ON (Quiet & Cool)";
-                _btnToggle.BackColor = Color.FromArgb(254, 240, 230);
-                _btnToggle.ForeColor = Color.FromArgb(190, 80, 0);
+                g.DrawString(tempStr, font, brush, rect.X + 10, rect.Y + 30);
             }
 
-            _lblCpu.Text = cpuTemp > 0 ? "CPU: " + cpuTemp + "°C" : "CPU: --";
-            _lblCpu.ForeColor = cpuTemp >= 85 ? Color.Red : Color.FromArgb(40, 40, 40);
+            // °C unit symbol next to number
+            int offset = tempStr.Length * 20 + 16;
+            using (var font = new Font("Segoe UI", 12f, FontStyle.Bold))
+            using (var brush = new SolidBrush(Color.FromArgb(148, 163, 184)))
+            {
+                g.DrawString("°C", font, brush, rect.X + offset, rect.Y + 38);
+            }
 
-            _lblGpu.Text = gpuTemp > 0 ? "GPU: " + gpuTemp + "°C" : "GPU: --";
-            _lblGpu.ForeColor = gpuTemp >= 85 ? Color.Red : Color.FromArgb(40, 40, 40);
+            // Subtitle
+            using (var font = new Font("Segoe UI", 7.5f))
+            using (var brush = new SolidBrush(Color.FromArgb(100, 116, 139)))
+            {
+                g.DrawString(subtitle, font, brush, rect.X + 14, rect.Y + 84);
+            }
+
+            // Subtle thermal progress bar (0 - 100°C)
+            Rectangle barBg = new Rectangle(rect.X + 14, rect.Y + 106, rect.Width - 28, 6);
+            using (var barPath = GetRoundedPath(barBg, 3))
+            using (var bBrush = new SolidBrush(Color.FromArgb(38, 46, 60)))
+            {
+                g.FillPath(bBrush, barPath);
+            }
+
+            if (temp > 0)
+            {
+                int fillWidth = Math.Max(6, Math.Min(barBg.Width, (int)((temp / 100f) * barBg.Width)));
+                Rectangle fillRect = new Rectangle(barBg.X, barBg.Y, fillWidth, barBg.Height);
+                using (var fillPath = GetRoundedPath(fillRect, 3))
+                using (var fBrush = new SolidBrush(tempColor))
+                {
+                    g.FillPath(fBrush, fillPath);
+                }
+            }
+        }
+
+        private static GraphicsPath GetRoundedPath(Rectangle rect, int radius)
+        {
+            GraphicsPath path = new GraphicsPath();
+            int d = radius * 2;
+            path.AddArc(rect.X, rect.Y, d, d, 180, 90);
+            path.AddArc(rect.Right - d, rect.Y, d, d, 270, 90);
+            path.AddArc(rect.Right - d, rect.Bottom - d, d, d, 0, 90);
+            path.AddArc(rect.X, rect.Bottom - d, d, d, 90, 90);
+            path.CloseFigure();
+            return path;
         }
     }
 }

@@ -24,8 +24,18 @@ namespace CoolModeTray
         [STAThread]
         static void Main()
         {
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+            {
+                File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "crash.log"), e.ExceptionObject.ToString());
+            };
+            Application.ThreadException += (s, e) =>
+            {
+                File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "crash.log"), e.Exception.ToString());
+            };
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+
             bool createdNew;
-            _appMutex = new Mutex(true, "Global\\CoolModeTray_SingleInstance_Mutex", out createdNew);
+            _appMutex = new Mutex(true, "Local\\CoolModeTray_SingleInstance_Mutex", out createdNew);
 
             if (!createdNew)
             {

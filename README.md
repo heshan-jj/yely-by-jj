@@ -32,9 +32,14 @@ Includes a Notion-themed desktop dashboard, comprehensive hardware telemetry wit
 - **Zero External Dependencies**:
   - Written in pure C# using Windows .NET 4.x WinForms and GDI+. Embedded Win32 `.ico` and in-app logo resource. Compiles directly with Windows' built-in `csc.exe` in under 2 seconds.
 
-## Building & Running
+## Building & Packaging
 
-Run [build.bat](file:///d:/Code/Projects/yely%20by%20jj/build.bat) or compile with Windows' built-in C# compiler:
-```cmd
-C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /optimize+ /win32icon:Yelly.ico /resource:Yelly.png /out:Yelly.exe Ui.cs Settings.cs Telemetry.cs Autopilot.cs MainForm.cs Yelly.cs
-```
+- **Compile standalone executable**:
+  Run [build.bat](file:///d:/Code/Projects/yely%20by%20jj/build.bat) or compile with Windows' built-in C# compiler:
+  ```cmd
+  C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /optimize+ /win32icon:Yelly.ico /resource:Yelly.png /out:Yelly.exe Ui.cs Settings.cs Telemetry.cs Autopilot.cs MainForm.cs Yelly.cs
+  ```
+
+- **Package into Windows installer**:
+  Run [package.bat](file:///d:/Code/Projects/yely%20by%20jj/package.bat) to build `dist\YellySetup.exe` with Inno Setup.
+

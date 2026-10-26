@@ -15,32 +15,33 @@ namespace Yelly
         public TagColor(Color bg, Color fg) { Bg = bg; Fg = fg; }
     }
 
-    /// <summary>Warm stone light theme. Page is darker than pure white; cards sit above it.</summary>
+    /// <summary>Semantic colors for the warm light and charcoal dark themes.</summary>
     static class T
     {
-        public static readonly Color Bg = Color.FromArgb(232, 228, 220);
-        public static readonly Color Side = Color.FromArgb(220, 216, 208);
-        public static readonly Color Surface = Color.FromArgb(247, 245, 240);
-        public static readonly Color Border = Color.FromArgb(204, 199, 190);
-        public static readonly Color BorderStrong = Color.FromArgb(176, 170, 160);
-        public static readonly Color Text = Color.FromArgb(28, 27, 24);
-        public static readonly Color Text2 = Color.FromArgb(68, 64, 58);
-        public static readonly Color Text3 = Color.FromArgb(96, 91, 84);
-        public static readonly Color Hover = Color.FromArgb(206, 201, 192);
-        public static readonly Color Selected = Color.FromArgb(192, 186, 176);
-        public static readonly Color Accent = Color.FromArgb(35, 131, 226);
-        public static readonly Color AccentHover = Color.FromArgb(0, 119, 212);
-        public static readonly Color Red = Color.FromArgb(224, 62, 62);
-        public static readonly Color Orange = Color.FromArgb(217, 115, 13);
-        public static readonly Color Green = Color.FromArgb(15, 123, 108);
-        public static readonly Color CalloutBlue = Color.FromArgb(206, 226, 238);
-        public static readonly Color CalloutYellow = Color.FromArgb(236, 220, 176);
-        public static readonly Color CalloutRed = Color.FromArgb(240, 214, 214);
+        public static bool Dark;
+        public static Color Bg { get { return Dark ? Color.FromArgb(28, 29, 32) : Color.FromArgb(232, 228, 220); } }
+        public static Color Side { get { return Dark ? Color.FromArgb(23, 24, 27) : Color.FromArgb(220, 216, 208); } }
+        public static Color Surface { get { return Dark ? Color.FromArgb(37, 39, 43) : Color.FromArgb(247, 245, 240); } }
+        public static Color Border { get { return Dark ? Color.FromArgb(64, 67, 73) : Color.FromArgb(204, 199, 190); } }
+        public static Color BorderStrong { get { return Dark ? Color.FromArgb(94, 98, 106) : Color.FromArgb(176, 170, 160); } }
+        public static Color Text { get { return Dark ? Color.FromArgb(242, 241, 237) : Color.FromArgb(28, 27, 24); } }
+        public static Color Text2 { get { return Dark ? Color.FromArgb(216, 214, 208) : Color.FromArgb(68, 64, 58); } }
+        public static Color Text3 { get { return Dark ? Color.FromArgb(177, 178, 183) : Color.FromArgb(96, 91, 84); } }
+        public static Color Hover { get { return Dark ? Color.FromArgb(49, 52, 58) : Color.FromArgb(206, 201, 192); } }
+        public static Color Selected { get { return Dark ? Color.FromArgb(64, 68, 76) : Color.FromArgb(192, 186, 176); } }
+        public static Color Accent { get { return Dark ? Color.FromArgb(35, 131, 226) : Color.FromArgb(35, 131, 226); } }
+        public static Color AccentHover { get { return Dark ? Color.FromArgb(0, 119, 212) : Color.FromArgb(0, 119, 212); } }
+        public static Color Red { get { return Dark ? Color.FromArgb(255, 128, 128) : Color.FromArgb(224, 62, 62); } }
+        public static Color Orange { get { return Dark ? Color.FromArgb(255, 183, 105) : Color.FromArgb(217, 115, 13); } }
+        public static Color Green { get { return Dark ? Color.FromArgb(110, 214, 184) : Color.FromArgb(15, 123, 108); } }
+        public static Color CalloutBlue { get { return Dark ? Color.FromArgb(30, 54, 73) : Color.FromArgb(206, 226, 238); } }
+        public static Color CalloutYellow { get { return Dark ? Color.FromArgb(65, 51, 30) : Color.FromArgb(236, 220, 176); } }
+        public static Color CalloutRed { get { return Dark ? Color.FromArgb(74, 36, 40) : Color.FromArgb(240, 214, 214); } }
 
-        public static readonly TagColor TagGray = new TagColor(Color.FromArgb(227, 226, 224), Color.FromArgb(50, 48, 44));
-        public static readonly TagColor TagBlue = new TagColor(Color.FromArgb(211, 229, 239), Color.FromArgb(24, 51, 71));
-        public static readonly TagColor TagOrange = new TagColor(Color.FromArgb(250, 222, 201), Color.FromArgb(73, 41, 14));
-        public static readonly TagColor TagGreen = new TagColor(Color.FromArgb(219, 237, 219), Color.FromArgb(28, 56, 41));
+        public static TagColor TagGray { get { return Dark ? new TagColor(Color.FromArgb(56, 59, 65), Color.FromArgb(225, 226, 230)) : new TagColor(Color.FromArgb(227, 226, 224), Color.FromArgb(50, 48, 44)); } }
+        public static TagColor TagBlue { get { return Dark ? new TagColor(Color.FromArgb(35, 66, 89), Color.FromArgb(172, 218, 255)) : new TagColor(Color.FromArgb(211, 229, 239), Color.FromArgb(24, 51, 71)); } }
+        public static TagColor TagOrange { get { return Dark ? new TagColor(Color.FromArgb(76, 51, 30), Color.FromArgb(255, 206, 158)) : new TagColor(Color.FromArgb(250, 222, 201), Color.FromArgb(73, 41, 14)); } }
+        public static TagColor TagGreen { get { return Dark ? new TagColor(Color.FromArgb(30, 64, 53), Color.FromArgb(162, 227, 194)) : new TagColor(Color.FromArgb(219, 237, 219), Color.FromArgb(28, 56, 41)); } }
 
         static readonly Dictionary<string, Font> fonts = new Dictionary<string, Font>();
         static string iconFamily;
@@ -54,11 +55,11 @@ namespace Yelly
                 FontStyle style = bold ? FontStyle.Bold : FontStyle.Regular;
                 try
                 {
-                    f = new Font("Google Sans", pt, style, GraphicsUnit.Point);
+                    f = new Font("Google Sans", pt * 96f / 72f, style, GraphicsUnit.Pixel);
                 }
                 catch (ArgumentException)
                 {
-                    f = new Font("Segoe UI", pt, style, GraphicsUnit.Point);
+                    f = new Font("Segoe UI", pt * 96f / 72f, style, GraphicsUnit.Pixel);
                 }
                 fonts[key] = f;
             }
@@ -81,7 +82,7 @@ namespace Yelly
             Font f;
             if (!fonts.TryGetValue(key, out f))
             {
-                f = new Font(iconFamily, pt, FontStyle.Regular, GraphicsUnit.Point);
+                f = new Font(iconFamily, pt * 96f / 72f, FontStyle.Regular, GraphicsUnit.Pixel);
                 fonts[key] = f;
             }
             return f;
@@ -90,16 +91,16 @@ namespace Yelly
 
     static class Ui
     {
-        const TextFormatFlags Base = TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine | TextFormatFlags.GlyphOverhangPadding;
 
-        /// <summary>Antialiased shapes. Text is composited ClearType so it stays sharp on the back buffer.</summary>
+
+        /// <summary>Antialiased shapes and text drawn in the same scalable coordinate space.</summary>
         public static void Prepare(Graphics g)
         {
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.PixelOffsetMode = PixelOffsetMode.None;
             g.CompositingQuality = CompositingQuality.HighQuality;
             g.InterpolationMode = InterpolationMode.NearestNeighbor;
-            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+            g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
         }
 
         public static void Text(Graphics g, string s, Font f, Color c, int x, int y)
@@ -111,10 +112,9 @@ namespace Yelly
         public static void Text(Graphics g, string s, Font f, Color c, int x, int y, Color back)
         {
             if (string.IsNullOrEmpty(s)) return;
-            Size sz = TextRenderer.MeasureText(s, f, new Size(int.MaxValue, int.MaxValue), Base);
-            var r = new Rectangle(x, y, Math.Max(1, sz.Width + 2), Math.Max(1, sz.Height + 2));
-            if (!DrawSharp(g, s, f, c, r, (int)(Base | TextFormatFlags.NoClipping)))
-                TextRenderer.DrawText(g, s, f, new Point(x, y), c, back, Base);
+            using (var brush = new SolidBrush(c))
+            using (var format = new StringFormat(StringFormat.GenericTypographic))
+                g.DrawString(s, f, brush, new PointF(x, y), format);
         }
 
         public static void TextIn(Graphics g, string s, Font f, Color c, Rectangle r, TextFormatFlags extra)
@@ -125,24 +125,49 @@ namespace Yelly
         public static void TextIn(Graphics g, string s, Font f, Color c, Rectangle r, TextFormatFlags extra, Color back)
         {
             if (string.IsNullOrEmpty(s) || r.Width <= 0 || r.Height <= 0) return;
-            var flags = TextFormatFlags.NoPrefix | TextFormatFlags.GlyphOverhangPadding | extra;
-            if ((extra & TextFormatFlags.WordBreak) == 0)
-                flags |= TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis;
-            else
-                flags |= TextFormatFlags.TextBoxControl;
-            if (!DrawSharp(g, s, f, c, r, (int)flags))
+            using (var format = new StringFormat(StringFormat.GenericTypographic))
+            using (var brush = new SolidBrush(c))
             {
-                if (back.A == 0)
-                    TextRenderer.DrawText(g, s, f, r, c, flags);
-                else
-                    TextRenderer.DrawText(g, s, f, r, c, back, flags);
+                format.Alignment = (extra & TextFormatFlags.HorizontalCenter) != 0 ? StringAlignment.Center
+                    : (extra & TextFormatFlags.Right) != 0 ? StringAlignment.Far : StringAlignment.Near;
+                format.LineAlignment = (extra & TextFormatFlags.VerticalCenter) != 0 ? StringAlignment.Center
+                    : (extra & TextFormatFlags.Bottom) != 0 ? StringAlignment.Far : StringAlignment.Near;
+                bool wrap = (extra & TextFormatFlags.WordBreak) != 0;
+                format.Trimming = wrap ? StringTrimming.EllipsisWord : StringTrimming.EllipsisCharacter;
+                format.FormatFlags = StringFormatFlags.LineLimit | (wrap ? 0 : StringFormatFlags.NoWrap);
+                g.DrawString(s, f, brush, r, format);
             }
         }
 
         public static int W(string s, Font f)
         {
             if (string.IsNullOrEmpty(s)) return 0;
-            return TextRenderer.MeasureText(s, f, new Size(int.MaxValue, int.MaxValue), Base).Width;
+            using (var bmp = new Bitmap(1, 1))
+            using (var g = Graphics.FromImage(bmp))
+            using (var format = new StringFormat(StringFormat.GenericTypographic))
+                return (int)Math.Ceiling(g.MeasureString(s, f, int.MaxValue, format).Width);
+        }
+
+        public static void DrawLogo(Graphics g, Rectangle r)
+        {
+            if (Logo == null) return;
+            var saved = g.Save();
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            if (!T.Dark) g.DrawImage(Logo, r);
+            else
+            {
+                using (var attrs = new System.Drawing.Imaging.ImageAttributes())
+                {
+                    var matrix = new System.Drawing.Imaging.ColorMatrix();
+                    matrix.Matrix00 = matrix.Matrix11 = matrix.Matrix22 = 0;
+                    matrix.Matrix40 = T.Text.R / 255f;
+                    matrix.Matrix41 = T.Text.G / 255f;
+                    matrix.Matrix42 = T.Text.B / 255f;
+                    attrs.SetColorMatrix(matrix);
+                    g.DrawImage(Logo, r, 0, 0, Logo.Width, Logo.Height, GraphicsUnit.Pixel, attrs);
+                }
+            }
+            g.Restore(saved);
         }
 
         public static GraphicsPath Round(RectangleF r, float rad)
@@ -201,10 +226,15 @@ namespace Yelly
         /// <summary>Property tag. Returns the pill width.</summary>
         public static int Tag(Graphics g, string s, TagColor c, int x, int y)
         {
+            return Tag(g, s, c, x, y, int.MaxValue);
+        }
+
+        public static int Tag(Graphics g, string s, TagColor c, int x, int y, int maxWidth)
+        {
             Font f = T.F(9f, false);
-            int w = W(s, f) + 16;
+            int w = Math.Max(0, Math.Min(W(s, f) + 16, maxWidth));
             Fill(g, c.Bg, new Rectangle(x, y, w, 22), 3);
-            TextIn(g, s, f, c.Fg, new Rectangle(x, y, w, 22), TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+            TextIn(g, s, f, c.Fg, new Rectangle(x + 8, y, Math.Max(0, w - 16), 22), TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter, c.Bg);
             return w;
         }
 
@@ -256,135 +286,5 @@ namespace Yelly
             }
         }
 
-        const int DttComposited = 0x2000;
-        const int DttTextColor = 1;
-        static IntPtr _theme;
-        static bool _themeFailed;
-        static IntPtr _memDc;
-        static IntPtr _dib;
-        static IntPtr _bits;
-        static int _dibW, _dibH, _stride;
-
-        static bool DrawSharp(Graphics g, string s, Font f, Color c, Rectangle r, int dtFlags)
-        {
-            if (_themeFailed || r.Width > 1600 || r.Height > 400) return false;
-            try
-            {
-                if (_theme == IntPtr.Zero)
-                {
-                    _theme = OpenThemeData(IntPtr.Zero, "globals");
-                    if (_theme == IntPtr.Zero) { _themeFailed = true; return false; }
-                }
-                EnsureDib(r.Width, r.Height);
-                int rowBytes = r.Width * 4;
-                for (int row = 0; row < r.Height; row++)
-                    ZeroMemory(new IntPtr(_bits.ToInt64() + row * _stride), (IntPtr)rowBytes);
-
-                IntPtr hfont = f.ToHfont();
-                IntPtr oldFont = SelectObject(_memDc, hfont);
-                var rc = new RECT { L = 0, T = 0, R = r.Width, B = r.Height };
-                var opts = new DTTOPTS();
-                opts.dwSize = (uint)Marshal.SizeOf(typeof(DTTOPTS));
-                opts.dwFlags = DttComposited | DttTextColor;
-                opts.crText = (uint)(c.R | (c.G << 8) | (c.B << 16));
-                int hr = DrawThemeTextEx(_theme, _memDc, 0, 0, s, -1, dtFlags, ref rc, ref opts);
-                SelectObject(_memDc, oldFont);
-                DeleteObject(hfont);
-                if (hr != 0) return false;
-
-                IntPtr dest = g.GetHdc();
-                try
-                {
-                    var blend = new BLENDFUNCTION { BlendOp = 0, BlendFlags = 0, SourceConstantAlpha = 255, AlphaFormat = 1 };
-                    return AlphaBlend(dest, r.X, r.Y, r.Width, r.Height, _memDc, 0, 0, r.Width, r.Height, blend);
-                }
-                finally
-                {
-                    g.ReleaseHdc(dest);
-                }
-            }
-            catch
-            {
-                _themeFailed = true;
-                return false;
-            }
-        }
-
-        static void EnsureDib(int w, int h)
-        {
-            if (_dib != IntPtr.Zero && w <= _dibW && h <= _dibH) return;
-            if (_dib != IntPtr.Zero) { DeleteObject(_dib); _dib = IntPtr.Zero; }
-            if (_memDc != IntPtr.Zero) { DeleteDC(_memDc); _memDc = IntPtr.Zero; }
-            _dibW = Math.Max(w, 64);
-            _dibH = Math.Max(h, 32);
-            _stride = _dibW * 4;
-            IntPtr screen = GetDC(IntPtr.Zero);
-            _memDc = CreateCompatibleDC(screen);
-            var info = new BITMAPINFO();
-            info.bmiHeader.biSize = Marshal.SizeOf(typeof(BITMAPINFOHEADER));
-            info.bmiHeader.biWidth = _dibW;
-            info.bmiHeader.biHeight = -_dibH;
-            info.bmiHeader.biPlanes = 1;
-            info.bmiHeader.biBitCount = 32;
-            info.bmiHeader.biCompression = 0;
-            _dib = CreateDIBSection(screen, ref info, 0, out _bits, IntPtr.Zero, 0);
-            ReleaseDC(IntPtr.Zero, screen);
-            SelectObject(_memDc, _dib);
-        }
-
-        [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
-        static extern IntPtr OpenThemeData(IntPtr hwnd, string classList);
-        [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
-        static extern int DrawThemeTextEx(IntPtr theme, IntPtr hdc, int part, int state, string text, int count, int flags, ref RECT rect, ref DTTOPTS opts);
-        [DllImport("gdi32.dll")]
-        static extern IntPtr CreateCompatibleDC(IntPtr hdc);
-        [DllImport("gdi32.dll")]
-        static extern bool DeleteDC(IntPtr hdc);
-        [DllImport("gdi32.dll")]
-        static extern IntPtr SelectObject(IntPtr hdc, IntPtr obj);
-        [DllImport("gdi32.dll")]
-        static extern bool DeleteObject(IntPtr obj);
-        [DllImport("gdi32.dll")]
-        static extern IntPtr CreateDIBSection(IntPtr hdc, ref BITMAPINFO bmi, uint usage, out IntPtr bits, IntPtr section, uint offset);
-        [DllImport("user32.dll")]
-        static extern IntPtr GetDC(IntPtr hwnd);
-        [DllImport("user32.dll")]
-        static extern int ReleaseDC(IntPtr hwnd, IntPtr hdc);
-        [DllImport("msimg32.dll")]
-        static extern bool AlphaBlend(IntPtr hdcDest, int x, int y, int w, int h, IntPtr hdcSrc, int xs, int ys, int ws, int hs, BLENDFUNCTION fn);
-        [DllImport("kernel32.dll", EntryPoint = "RtlZeroMemory")]
-        static extern void ZeroMemory(IntPtr dest, IntPtr length);
-
-        [StructLayout(LayoutKind.Sequential)]
-        struct RECT { public int L, T, R, B; }
-
-        [StructLayout(LayoutKind.Sequential)]
-        struct BITMAPINFOHEADER
-        {
-            public int biSize, biWidth, biHeight;
-            public short biPlanes, biBitCount;
-            public int biCompression, biSizeImage, biXPelsPerMeter, biYPelsPerMeter, biClrUsed, biClrImportant;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        struct BITMAPINFO
-        {
-            public BITMAPINFOHEADER bmiHeader;
-            public uint bmiColors;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        struct DTTOPTS
-        {
-            public uint dwSize, dwFlags, crText, crBorder, crShadow;
-            public int iTextShadowType, ptShadowOffsetX, ptShadowOffsetY, iBorderSize, iFontPropId, iColorPropId, iStateId, fApplyOverlay, iGlowSize;
-            public IntPtr pfnDrawTextCallback, lParam;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        struct BLENDFUNCTION
-        {
-            public byte BlendOp, BlendFlags, SourceConstantAlpha, AlphaFormat;
-        }
     }
 }

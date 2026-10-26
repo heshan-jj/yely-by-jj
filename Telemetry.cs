@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.Management;
 
 namespace Yelly
 {
@@ -24,7 +27,7 @@ namespace Yelly
 
     class Snapshot
     {
-        public int CpuTemp = -1, GpuTemp = -1, GpuFan = -1, Battery = -1;
+        public int CpuTemp = -1, GpuTemp = -1, GpuFan = -1, Battery = -1, BatteryRemainingSeconds = -1;
         public float CpuLoad = -1, CpuMHz = -1, RamPct = -1, RamUsed = -1, RamTotal = -1;
         public float GpuLoad = -1, GpuPower = -1, GpuClock = -1, GpuMemUsed = -1, GpuMemTotal = -1;
         public string CpuName = "", GpuName = "";
@@ -33,6 +36,24 @@ namespace Yelly
         public double SumCpu;
         public readonly Hist HCpuTemp = new Hist(), HGpuTemp = new Hist(), HCpuLoad = new Hist(), HCpuMHz = new Hist();
         public readonly Hist HGpuLoad = new Hist(), HGpuPower = new Hist(), HRam = new Hist();
+        public readonly List<ProcessorReading> Processors = new List<ProcessorReading>();
+        public List<StorageReading> Drives = new List<StorageReading>();
+        public volatile bool StorageReady;
+    }
+
+    class ProcessorReading
+    {
+        public string Name;
+        public PerformanceCounter LoadCounter, ClockCounter;
+        public float Load = -1, MHz = -1;
+    }
+
+    class StorageReading
+    {
+        public string Name;
+        public string Type;
+        public long SizeBytes;
+        public int Temperature = -1, TemperatureMax = -1, Wear = -1, PowerOnHours = -1;
     }
 
     class Telemetry : IDisposable
@@ -40,6 +61,8 @@ namespace Yelly
         public readonly Snapshot S = new Snapshot();
         PerformanceCounter tz, load, freq;
         Process smi;
+        System.Threading.Timer driveTimer;
+        int drivePollActive;
 
         [StructLayout(LayoutKind.Sequential)]
         class MemStatus
@@ -63,8 +86,116 @@ namespace Yelly
             catch { /* firmware exposes no thermal zone: CPU temp stays unavailable */ }
             load = Counter("Processor Information", "% Processor Utility", "_Total");
             freq = Counter("Processor Information", "Processor Frequency", "_Total");
+            try
+            {
+                var category = new PerformanceCounterCategory("Processor Information");
+                foreach (string instance in category.GetInstanceNames())
+                {
+                    if (instance == "_Total" || instance.EndsWith(",_Total", StringComparison.OrdinalIgnoreCase)) continue;
+                    PerformanceCounter processorLoad = Counter("Processor Information", "% Processor Utility", instance);
+                    PerformanceCounter processorClock = Counter("Processor Information", "Processor Frequency", instance);
+                    if (processorLoad != null || processorClock != null)
+                        S.Processors.Add(new ProcessorReading { Name = instance, LoadCounter = processorLoad, ClockCounter = processorClock });
+                }
+            }
+            catch { /* per-logical-processor counters are optional */ }
             StartSmi();
+            driveTimer = new System.Threading.Timer(PollDrives, null, 1000, 15000);
             AppDomain.CurrentDomain.ProcessExit += delegate { Dispose(); };
+        }
+
+        void PollDrives(object state)
+        {
+            if (Interlocked.Exchange(ref drivePollActive, 1) != 0) return;
+            try
+            {
+                var counters = new Dictionary<string, StorageReading>(StringComparer.OrdinalIgnoreCase);
+                using (var searcher = new ManagementObjectSearcher(@"root\Microsoft\Windows\Storage",
+                    "SELECT DeviceId, Temperature, TemperatureMax, Wear, PowerOnHours FROM MSFT_StorageReliabilityCounter"))
+                using (var results = searcher.Get())
+                {
+                    foreach (ManagementObject item in results)
+                    using (item)
+                    {
+                        string id = Convert.ToString(item["DeviceId"], CultureInfo.InvariantCulture);
+                        if (string.IsNullOrEmpty(id)) continue;
+                        var reading = new StorageReading();
+                        reading.Temperature = SensorValue(item["Temperature"]);
+                        reading.TemperatureMax = SensorValue(item["TemperatureMax"]);
+                        reading.Wear = SensorValue(item["Wear"]);
+                        reading.PowerOnHours = SensorValue(item["PowerOnHours"]);
+                        counters[id] = reading;
+                    }
+                }
+
+                var drives = new List<StorageReading>();
+                using (var searcher = new ManagementObjectSearcher(@"root\Microsoft\Windows\Storage",
+                    "SELECT DeviceId, FriendlyName, Size, MediaType FROM MSFT_PhysicalDisk"))
+                using (var results = searcher.Get())
+                {
+                    foreach (ManagementObject item in results)
+                    using (item)
+                    {
+                        string id = Convert.ToString(item["DeviceId"], CultureInfo.InvariantCulture);
+                        StorageReading reliability;
+                        counters.TryGetValue(id ?? "", out reliability);
+                        drives.Add(new StorageReading
+                        {
+                            Name = CleanDriveName(Convert.ToString(item["FriendlyName"], CultureInfo.InvariantCulture)),
+                            Type = MediaType(item["MediaType"]),
+                            SizeBytes = SafeSize(item["Size"]),
+                            Temperature = reliability == null ? -1 : reliability.Temperature,
+                            TemperatureMax = reliability == null ? -1 : reliability.TemperatureMax,
+                            Wear = reliability == null ? -1 : reliability.Wear,
+                            PowerOnHours = reliability == null ? -1 : reliability.PowerOnHours
+                        });
+                    }
+                }
+                S.Drives = drives;
+            }
+            catch { S.Drives = new List<StorageReading>(); /* storage provider or drive sensors unavailable */ }
+            finally
+            {
+                S.StorageReady = true;
+                Interlocked.Exchange(ref drivePollActive, 0);
+            }
+        }
+
+        static int SensorValue(object value)
+        {
+            try
+            {
+                if (value == null) return -1;
+                int number = Convert.ToInt32(value, CultureInfo.InvariantCulture);
+                return number >= 0 && number < 255 ? number : -1;
+            }
+            catch { return -1; }
+        }
+
+        static long SafeSize(object value)
+        {
+            try { return value == null ? 0 : Convert.ToInt64(value, CultureInfo.InvariantCulture); }
+            catch { return 0; }
+        }
+
+        static string MediaType(object value)
+        {
+            try
+            {
+                switch (Convert.ToInt32(value, CultureInfo.InvariantCulture))
+                {
+                    case 3: return "HDD";
+                    case 4: return "SSD";
+                    case 5: return "SCM";
+                    default: return "Drive";
+                }
+            }
+            catch { return "Drive"; }
+        }
+
+        static string CleanDriveName(string name)
+        {
+            return string.IsNullOrWhiteSpace(name) ? "Unknown physical drive" : Regex.Replace(name.Trim(), @"\s+", " ");
         }
 
         static PerformanceCounter Counter(string cat, string name, string inst)
@@ -129,6 +260,11 @@ namespace Yelly
             try { if (tz != null) { float k = tz.NextValue(); if (k > 200 && k < 420) S.CpuTemp = (int)Math.Round(k - 273.15f); } } catch { }
             try { if (load != null) S.CpuLoad = Math.Max(0, Math.Min(100, load.NextValue())); } catch { }
             try { if (freq != null) S.CpuMHz = freq.NextValue(); } catch { }
+            foreach (ProcessorReading processor in S.Processors)
+            {
+                try { if (processor.LoadCounter != null) processor.Load = Math.Max(0, Math.Min(100, processor.LoadCounter.NextValue())); } catch { }
+                try { if (processor.ClockCounter != null) processor.MHz = processor.ClockCounter.NextValue(); } catch { }
+            }
 
             var m = new MemStatus();
             if (GlobalMemoryStatusEx(m))
@@ -140,6 +276,7 @@ namespace Yelly
 
             PowerStatus ps = SystemInformation.PowerStatus;
             S.OnAC = ps.PowerLineStatus != PowerLineStatus.Offline;
+            S.BatteryRemainingSeconds = ps.BatteryLifeRemaining;
             S.Battery = (ps.BatteryChargeStatus & BatteryChargeStatus.NoSystemBattery) != 0 || ps.BatteryLifePercent > 1f
                 ? -1 : (int)Math.Round(ps.BatteryLifePercent * 100);
 
@@ -161,6 +298,7 @@ namespace Yelly
             S.GpuName = "GeForce RTX 2050";
             S.CpuTemp = 71; S.GpuTemp = 58; S.GpuFan = -1; S.Battery = 80; S.OnAC = false;
             S.CpuLoad = 23; S.CpuMHz = 2053; S.RamPct = 71; S.RamUsed = 11.2f; S.RamTotal = 15.7f;
+            for (int i = 0; i < 8; i++) S.Processors.Add(new ProcessorReading { Name = "0," + i, Load = 8 + i * 4, MHz = 1800 + i * 100 });
             S.GpuLoad = 12; S.GpuPower = 28; S.GpuClock = 1245; S.GpuMemUsed = 412; S.GpuMemTotal = 4096;
             S.PeakCpu = 92; S.PeakGpu = 66; S.SumCpu = 68 * 400; S.NCpu = 400;
             for (int i = 0; i < Hist.N; i++)
@@ -175,6 +313,15 @@ namespace Yelly
 
         public void Dispose()
         {
+            try { if (driveTimer != null) driveTimer.Dispose(); } catch { }
+            try { if (tz != null) tz.Dispose(); } catch { }
+            try { if (load != null) load.Dispose(); } catch { }
+            try { if (freq != null) freq.Dispose(); } catch { }
+            foreach (ProcessorReading processor in S.Processors)
+            {
+                try { if (processor.LoadCounter != null) processor.LoadCounter.Dispose(); } catch { }
+                try { if (processor.ClockCounter != null) processor.ClockCounter.Dispose(); } catch { }
+            }
             try { if (smi != null && !smi.HasExited) smi.Kill(); } catch { }
             smi = null;
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using Microsoft.Win32;
 
 namespace Yelly
@@ -27,6 +28,9 @@ namespace Yelly
         public bool Notify = true;
         public bool TrayTemp = true;
         public bool Fahrenheit;
+        public bool ShortcutEnabled;
+        public int ShortcutModifiers = 3; // Ctrl + Alt
+        public int ShortcutKey = (int)Keys.K;
         public int Alert = 85;
         public int Refresh = 1;
         /// <summary>Power values captured before CoolMode was first enabled, restored when it is turned off.</summary>
@@ -76,6 +80,9 @@ namespace Yelly
                         case "Notify": s.Notify = v == "1"; break;
                         case "TrayTemp": s.TrayTemp = v == "1"; break;
                         case "Fahrenheit": s.Fahrenheit = v == "1"; break;
+                        case "ShortcutEnabled": s.ShortcutEnabled = v == "1"; break;
+                        case "ShortcutModifiers": s.ShortcutModifiers = I(v, s.ShortcutModifiers) & 7; break;
+                        case "ShortcutKey": s.ShortcutKey = I(v, s.ShortcutKey); break;
                         case "Alert": s.Alert = I(v, s.Alert); break;
                         case "Refresh": s.Refresh = I(v, s.Refresh); break;
                         case "OrigBoost": s.OrigBoost = I(v, s.OrigBoost); break;
@@ -94,13 +101,15 @@ namespace Yelly
 
         public void Clamp()
         {
-            Cap = Math.Max(50, Math.Min(99, Cap));
+            Cap = Math.Max(50, Math.Min(100, Cap));
             Alert = Math.Max(60, Math.Min(100, Alert));
             Refresh = Math.Max(1, Math.Min(5, Refresh));
             TempOn = Math.Max(50, Math.Min(100, TempOn));
             TempOff = Math.Max(40, Math.Min(TempOn - 5, TempOff));
             OrigBoost = Math.Max(0, Math.Min(4, OrigBoost));
             OrigMax = Math.Max(1, Math.Min(100, OrigMax));
+            if (ShortcutKey < 1 || ShortcutKey > 255) ShortcutKey = (int)Keys.K;
+            if ((ShortcutModifiers & 7) == 0) ShortcutModifiers = 3;
         }
 
         public void Save()
@@ -121,6 +130,9 @@ namespace Yelly
                 l.Add("Notify=" + B(Notify));
                 l.Add("TrayTemp=" + B(TrayTemp));
                 l.Add("Fahrenheit=" + B(Fahrenheit));
+                l.Add("ShortcutEnabled=" + B(ShortcutEnabled));
+                l.Add("ShortcutModifiers=" + ShortcutModifiers);
+                l.Add("ShortcutKey=" + ShortcutKey);
                 l.Add("Alert=" + Alert);
                 l.Add("Refresh=" + Refresh);
                 l.Add("OrigBoost=" + OrigBoost);

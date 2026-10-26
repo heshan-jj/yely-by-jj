@@ -30,12 +30,18 @@ Includes a desktop dashboard, live hardware telemetry with sparklines, and an Au
 
 - **Branded & Notion-Themed UI**:
   - Distinctive Yelly branding, custom window controls, and a warm stone light theme.
-  - Interactive navigation: **Dashboard**, **Autopilot**, and **Settings**.
+  - Interactive navigation: **Dashboard**, **Autopilot**, **Hardware**, and **Settings**.
   - One-click hero action card to instantly toggle CoolMode.
+  - Dark theme by default, including themed logos, tags, dialogs, and tray menus.
+  - Adjustable CoolMode processor cap from 50% to 100%; changes apply immediately while CoolMode is active.
+  - Optional system-wide CoolMode shortcut: enable it in **Settings**, then click the key combination to record your preferred Ctrl, Alt, or Shift shortcut. If another app owns that combination, Yelly keeps the previous shortcut and explains the conflict.
+  - Per-monitor display scaling keeps text, controls, and click targets aligned as the window moves between screens. The dashboard fits within smaller working areas.
 
 - **Real-Time Hardware Telemetry**:
+  - A scrollable **Hardware Monitor** page with CPU model, thermal-zone temperature, total and per-logical-processor load and clock, GPU sensor readings, physical drive model/type/capacity, drive temperature and reliability data, RAM, and battery status.
   - **CPU**: Thermal zone temperature (°C / °F), utility load percentage, clock frequency (GHz), and live sparkline.
-  - **GPU**: NVIDIA RTX/GTX temperature, GPU core utilization, power draw (W), and VRAM usage via non-blocking background streaming.
+  - **GPU**: NVIDIA RTX/GTX temperature, fan speed, core utilization, power draw (W), clock, and VRAM usage via non-blocking background streaming.
+  - **Storage**: Physical disk model, SSD/HDD type, capacity, device-reported temperature, wear indicator, and power-on hours through the Windows Storage provider. Temperature and reliability fields appear when the drive and its firmware expose them.
   - **Memory & Power**: Physical RAM committed/total, battery charging status, battery percentage, and AC line detection.
 
 - **Autopilot Automation Engine**:
@@ -52,10 +58,12 @@ Includes a desktop dashboard, live hardware telemetry with sparklines, and an Au
 
 ## Building & Packaging
 
+- **Check themes and display scaling**: run `tests\check-layout.bat`. This renders all four pages in both themes at 100%, 125%, 150%, and 200%, checks navigation and theme hit targets, and checks small-screen fit without changing power settings. Pass an output folder to save render previews.
+
 - **Compile standalone executable**:
   Run [build.bat](file:///d:/Code/Projects/yely%20by%20jj/build.bat) or compile with Windows' built-in C# compiler:
   ```cmd
-  C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /optimize+ /win32icon:Yelly.ico /resource:Yelly.png /out:Yelly.exe Ui.cs Settings.cs Telemetry.cs Autopilot.cs MainForm.cs Yelly.cs
+  C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /optimize+ /reference:System.Management.dll /win32icon:Yelly.ico /resource:Yelly.png /out:Yelly.exe Ui.cs Settings.cs Telemetry.cs Autopilot.cs MainForm.cs Yelly.cs
   ```
 
 - **Package into Windows installer**:

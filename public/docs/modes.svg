@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="392" viewBox="0 0 920 392">
+  <title>CoolMode and full performance</title>
+  <desc>CoolMode locks boost off and caps the processor at 99 percent. Full performance restores the original boost and a 100 percent cap.</desc>
+  <rect width="920" height="392" rx="18" fill="#E8E4DC"/>
+  <text x="36" y="48" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="26" font-weight="600">Two power states</text>
+  <text x="36" y="76" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="15">One button swaps them. Autopilot can swap them for you.</text>
+
+  <rect x="32" y="108" width="400" height="248" rx="14" fill="#F7F5F0" stroke="#C8C2B8"/>
+  <rect x="52" y="132" width="86" height="28" rx="8" fill="#2383E2"/>
+  <text x="95" y="151" text-anchor="middle" fill="#FFFFFF" font-family="Segoe UI, system-ui, sans-serif" font-size="13" font-weight="700">CoolMode</text>
+  <text x="52" y="196" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="20" font-weight="600">Quiet and cool</text>
+  <text x="52" y="236" fill="#44403A" font-family="Segoe UI, system-ui, sans-serif" font-size="15">Boost mode locked off</text>
+  <text x="52" y="264" fill="#44403A" font-family="Segoe UI, system-ui, sans-serif" font-size="15">Maximum processor state 99%</text>
+  <text x="52" y="292" fill="#44403A" font-family="Segoe UI, system-ui, sans-serif" font-size="15">Applied on AC and battery</text>
+  <text x="52" y="328" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="13">Lower clocks. Less fan noise.</text>
+
+  <rect x="488" y="108" width="400" height="248" rx="14" fill="#F7F5F0" stroke="#C8C2B8"/>
+  <rect x="508" y="132" width="132" height="28" rx="8" fill="#D9730D"/>
+  <text x="574" y="151" text-anchor="middle" fill="#FFFFFF" font-family="Segoe UI, system-ui, sans-serif" font-size="13" font-weight="700">Full performance</text>
+  <text x="508" y="196" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="20" font-weight="600">Turbo restored</text>
+  <text x="508" y="236" fill="#44403A" font-family="Segoe UI, system-ui, sans-serif" font-size="15">Original boost mode restored</text>
+  <text x="508" y="264" fill="#44403A" font-family="Segoe UI, system-ui, sans-serif" font-size="15">Maximum processor state 100%</text>
+  <text x="508" y="292" fill="#44403A" font-family="Segoe UI, system-ui, sans-serif" font-size="15">Single-core burst available</text>
+  <text x="508" y="328" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="13">The values captured before CoolMode.</text>
+
+  <rect x="432" y="210" width="56" height="36" rx="18" fill="#1C1B18"/>
+  <path d="M448 228 h20 M462 222 l8 6 -8 6" fill="none" stroke="#F7F5F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

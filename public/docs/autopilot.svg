@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="520" viewBox="0 0 920 520">
+  <title>Autopilot rule order</title>
+  <desc>Autopilot checks a running app rule first, then battery, then CPU temperature with hysteresis. If none apply, the manual CoolMode choice stays.</desc>
+  <rect width="920" height="520" rx="18" fill="#E8E4DC"/>
+  <text x="36" y="48" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="26" font-weight="600">Autopilot, in order</text>
+  <text x="36" y="76" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="15">The first match wins. Later checks are skipped.</text>
+
+  <rect x="32" y="104" width="856" height="84" rx="14" fill="#F7F5F0" stroke="#C8C2B8"/>
+  <circle cx="76" cy="146" r="18" fill="#2383E2"/>
+  <text x="76" y="152" text-anchor="middle" fill="#FFFFFF" font-family="Segoe UI, system-ui, sans-serif" font-size="16" font-weight="700">1</text>
+  <text x="112" y="138" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="18" font-weight="600">A listed app is running</text>
+  <text x="112" y="164" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="14">That rule either forces CoolMode or turns it off for full boost.</text>
+  <rect x="700" y="126" width="156" height="40" rx="8" fill="#E4F0FB"/>
+  <text x="778" y="151" text-anchor="middle" fill="#1C4E80" font-family="Segoe UI, system-ui, sans-serif" font-size="13" font-weight="600">Highest priority</text>
+
+  <rect x="32" y="204" width="856" height="84" rx="14" fill="#F7F5F0" stroke="#C8C2B8"/>
+  <circle cx="76" cy="246" r="18" fill="#0F7B6C"/>
+  <text x="76" y="252" text-anchor="middle" fill="#FFFFFF" font-family="Segoe UI, system-ui, sans-serif" font-size="16" font-weight="700">2</text>
+  <text x="112" y="238" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="18" font-weight="600">Running on battery</text>
+  <text x="112" y="264" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="14">If the battery rule is on and the cord is out, CoolMode is forced.</text>
+  <rect x="700" y="226" width="156" height="40" rx="8" fill="#DCEEEA"/>
+  <text x="778" y="251" text-anchor="middle" fill="#0F7B6C" font-family="Segoe UI, system-ui, sans-serif" font-size="13" font-weight="600">CoolMode on</text>
+
+  <rect x="32" y="304" width="856" height="100" rx="14" fill="#F7F5F0" stroke="#C8C2B8"/>
+  <circle cx="76" cy="354" r="18" fill="#E03E3E"/>
+  <text x="76" y="360" text-anchor="middle" fill="#FFFFFF" font-family="Segoe UI, system-ui, sans-serif" font-size="16" font-weight="700">3</text>
+  <text x="112" y="338" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="18" font-weight="600">CPU crosses the heat band</text>
+  <text x="112" y="364" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="14">Optional. CoolMode turns on at the high mark and stays until the low mark.</text>
+  <rect x="112" y="378" width="216" height="8" rx="4" fill="#E8C9A0"/>
+  <rect x="112" y="378" width="68" height="8" rx="4" fill="#9ECCC2"/>
+  <rect x="260" y="378" width="68" height="8" rx="4" fill="#E7B4B2"/>
+  <text x="112" y="404" fill="#0F7B6C" font-family="Segoe UI, system-ui, sans-serif" font-size="12">70&#176; off</text>
+  <text x="198" y="404" fill="#9A5B12" font-family="Segoe UI, system-ui, sans-serif" font-size="12">holds</text>
+  <text x="270" y="404" fill="#E03E3E" font-family="Segoe UI, system-ui, sans-serif" font-size="12">85&#176; on</text>
+  <text x="700" y="360" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="12">Defaults. Both marks</text>
+  <text x="700" y="378" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="12">are configurable.</text>
+
+  <rect x="32" y="420" width="856" height="72" rx="14" fill="#F7F5F0" stroke="#C8C2B8"/>
+  <circle cx="76" cy="456" r="18" fill="#8A847C"/>
+  <text x="76" y="462" text-anchor="middle" fill="#FFFFFF" font-family="Segoe UI, system-ui, sans-serif" font-size="16" font-weight="700">4</text>
+  <text x="112" y="450" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="18" font-weight="600">Nothing matched</text>
+  <text x="112" y="476" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="14">The dashboard button keeps whatever you last chose.</text>
+</svg>

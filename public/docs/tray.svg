@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="220" viewBox="0 0 920 220">
+  <title>Tray icon colors</title>
+  <desc>The tray icon shows the CPU temperature. Blue means CoolMode, amber means full performance, and red means the CPU is at or above the alert temperature.</desc>
+  <rect width="920" height="220" rx="18" fill="#E8E4DC"/>
+  <text x="36" y="48" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="26" font-weight="600">Tray icon</text>
+  <text x="36" y="76" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="15">Two digits, the current CPU temperature. Color is the state.</text>
+
+  <rect x="32" y="104" width="268" height="84" rx="14" fill="#F7F5F0" stroke="#C8C2B8"/>
+  <rect x="52" y="122" width="48" height="48" rx="10" fill="#2383E2"/>
+  <text x="76" y="152" text-anchor="middle" fill="#FFFFFF" font-family="Segoe UI, system-ui, sans-serif" font-size="16" font-weight="700">62</text>
+  <text x="116" y="144" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="16" font-weight="600">CoolMode</text>
+  <text x="116" y="166" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="13">Boost is capped</text>
+
+  <rect x="326" y="104" width="268" height="84" rx="14" fill="#F7F5F0" stroke="#C8C2B8"/>
+  <rect x="346" y="122" width="48" height="48" rx="10" fill="#D9730D"/>
+  <text x="370" y="152" text-anchor="middle" fill="#FFFFFF" font-family="Segoe UI, system-ui, sans-serif" font-size="16" font-weight="700">71</text>
+  <text x="410" y="144" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="16" font-weight="600">Full boost</text>
+  <text x="410" y="166" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="13">Turbo is available</text>
+
+  <rect x="620" y="104" width="268" height="84" rx="14" fill="#F7F5F0" stroke="#C8C2B8"/>
+  <rect x="640" y="122" width="48" height="48" rx="10" fill="#E03E3E"/>
+  <text x="664" y="152" text-anchor="middle" fill="#FFFFFF" font-family="Segoe UI, system-ui, sans-serif" font-size="16" font-weight="700">88</text>
+  <text x="704" y="144" fill="#1C1B18" font-family="Segoe UI, system-ui, sans-serif" font-size="16" font-weight="600">Thermal alert</text>
+  <text x="704" y="166" fill="#605B54" font-family="Segoe UI, system-ui, sans-serif" font-size="13">At or above the alert mark</text>
+</svg>

@@ -1,0 +1,26 @@
+{
+  "name": "yely-by-jj",
+  "version": "1.0.0",
+  "description": "<p align=\"center\">   <img src=\"Yelly.png\" width=\"128\" alt=\"Yelly Logo\" /> </p>",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "node tests/check-site.js"
+  },
+  "bugs": {
+    "url": "https://github.com/heshan-jj/yely-by-jj/issues"
+  },
+  "homepage": "https://github.com/heshan-jj/yely-by-jj#readme",
+  "dependencies": {
+    "@astrojs/vercel": "^11.0.16",
+    "astro": "^7.4.2"
+  }
+}

@@ -4,3 +4,7 @@ bin/
 obj/
 dist/
 tests/artifacts/
+node_modules/
+.astro/
+.vercel/
+dist-site/

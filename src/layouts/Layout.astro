@@ -1,0 +1,113 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Yelly - Lightweight CoolMode & Telemetry Utility for Windows",
+  description = "A zero-dependency, lightweight Windows desktop & system tray utility for CoolMode power management and live hardware telemetry.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/cover.svg" />
+    <meta name="theme-color" content="#1c1d20" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --surface-hover: #f0ece1;
+    --border: #e2ddd3;
+    --border-strong: #c8c2b5;
+    --text: #1c1b18;
+    --text-muted: #59554d;
+    --text-subtle: #827c70;
+    --accent: #2383e2;
+    --accent-hover: #0070d6;
+    --accent-bg: #eaf3fd;
+    --green: #0f7b6c;
+    --green-bg: #e6f6f2;
+    --amber: #d9730d;
+    --amber-bg: #fdf3e7;
+    --red: #e03e3e;
+    --red-bg: #fdeeee;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --font-sans: 'Google Sans', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    --font-mono: 'Cascadia Code', Consolas, 'SF Mono', monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151618;
+      --surface: #1e2024;
+      --surface-hover: #272a30;
+      --border: #2d3138;
+      --border-strong: #40454f;
+      --text: #f2f1ed;
+      --text-muted: #abaaa2;
+      --text-subtle: #75746f;
+      --accent: #3a97ff;
+      --accent-hover: #61adff;
+      --accent-bg: #172a40;
+      --green: #48c79c;
+      --green-bg: #143328;
+      --amber: #f89e43;
+      --amber-bg: #3b2512;
+      --red: #ff7878;
+      --red-bg: #3d1c1c;
+    }
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--bg);
+    color: var(--text);
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.6;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button, input, select {
+    font-family: inherit;
+  }
+</style>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500" width="100%" height="100%">
+  <defs>
+
+  </defs>
+
+  <!-- Solid Primary Background -->
+  <rect width="1024" height="500" fill="#3B2E28" />
+
+  <!-- Left Side: Typography -->
+  <!-- 1. Main Heading -->
+  <text x="76" y="228" fill="#FFFFFF" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="76" font-weight="700" letter-spacing="-0.03em">yelly</text>
+
+  <!-- 2. Secondary Tag / Native Name / Sub-mark -->
+  <text x="76" y="304" fill="#FFFFFF" fill-opacity="0.82" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="30" font-weight="500" letter-spacing="-0.01em">coolmode utility</text>
+
+  <!-- 3. Sub-heading Description -->
+  <text x="74" y="377" fill="#FFFFFF" fill-opacity="0.95" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18.5" font-weight="400" letter-spacing="-0.01em">Zero-dependency hardware telemetry for Windows</text>
+
+  <!-- Right Side: Cream Squircle Card with Logo -->
+  <rect x="612" y="70" width="360" height="360" rx="64" fill="#F7F5EF" />
+
+  <!-- Centered Logo inside Squircle (Squircle center is at X=792, Y=250) -->
+
+  <!-- Yelly Logo Graphic centered inside squircle -->
+  <svg x="667" y="165" width="250" height="170" viewBox="0 200 1000 620">
+    <path d="M 22.0 218.0 L 237.0 218.0 L 238.0 426.0 L 223.0 427.0 L 205.0 436.0 L 193.0 449.0 L 187.0 464.0 L 188.0 486.0 L 195.0 502.0 L 208.0 514.0 L 227.0 521.0 L 251.0 521.0 L 261.0 519.0 L 287.0 509.0 L 300.0 502.0 L 318.0 489.0 L 328.0 479.0 L 337.0 467.0 L 347.0 448.0 L 353.0 428.0 L 357.0 399.0 L 357.0 218.0 L 575.0 218.0 L 575.0 410.0 L 571.0 432.0 L 560.0 458.0 L 546.0 478.0 L 521.0 502.0 L 452.0 554.0 L 430.0 578.0 L 417.0 601.0 L 410.0 630.0 L 410.0 802.0 L 186.0 801.0 L 186.0 596.0 L 188.0 583.0 L 193.0 568.0 L 199.0 557.0 L 210.0 544.0 L 184.0 543.0 L 155.0 539.0 L 132.0 533.0 L 111.0 525.0 L 90.0 514.0 L 68.0 498.0 L 53.0 483.0 L 39.0 463.0 L 27.0 434.0 L 22.0 402.0 L 22.0 218.0 Z" fill="#1C1B18" />
+    <path d="M 746.0 218.0 L 970.0 218.0 L 970.0 591.0 L 964.0 638.0 L 953.0 676.0 L 938.0 707.0 L 924.0 727.0 L 909.0 743.0 L 892.0 757.0 L 866.0 773.0 L 824.0 789.0 L 786.0 797.0 L 748.0 801.0 L 518.0 802.0 L 518.0 532.0 L 576.0 531.0 L 617.0 536.0 L 655.0 547.0 L 688.0 565.0 L 706.0 581.0 L 718.0 597.0 L 727.0 615.0 L 734.0 642.0 L 736.0 662.0 L 734.0 691.0 L 726.0 718.0 L 711.0 742.0 L 713.0 748.0 L 715.0 749.0 L 728.0 741.0 L 743.0 726.0 L 759.0 698.0 L 767.0 669.0 L 769.0 637.0 L 764.0 604.0 L 760.0 592.0 L 746.0 568.0 L 746.0 218.0 Z" fill="#1C1B18" />
+  </svg>
+
+</svg>

@@ -1,0 +1,43 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Page Not Found - Yelly">
+  <div class="not-found-container">
+    <img src="/Yelly.png" alt="Yelly logo" width="64" height="64" />
+    <h1>404 - Page Not Found</h1>
+    <p>The page you're looking for doesn't exist.</p>
+    <a href="/" class="btn-home">Return to Home</a>
+  </div>
+</Layout>
+
+<style>
+  .not-found-container {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    gap: 1rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  p {
+    color: var(--text-muted);
+  }
+
+  .btn-home {
+    margin-top: 1rem;
+    padding: 0.6rem 1.2rem;
+    background: var(--accent);
+    color: white;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+  }
+</style>

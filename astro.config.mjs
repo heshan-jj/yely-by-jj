@@ -4,4 +4,5 @@ import vercel from '@astrojs/vercel';
 export default defineConfig({
   outDir: './dist-site',
   adapter: vercel(),
+  devToolbar: { enabled: false },
 });

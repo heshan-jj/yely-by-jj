@@ -34,50 +34,33 @@ const {
 
 <style is:global>
   :root {
-    --bg: #f7f5f0;
-    --surface: #ffffff;
-    --surface-hover: #f0ece1;
-    --border: #e2ddd3;
-    --border-strong: #c8c2b5;
-    --text: #1c1b18;
-    --text-muted: #59554d;
-    --text-subtle: #827c70;
+    color-scheme: dark;
+    --bg: #1c1d20;
+    --side: #17181b;
+    --surface: #25272b;
+    --surface-raised: #292b30;
+    --surface-hover: #31343a;
+    --border: #404349;
+    --border-strong: #5e626a;
+    --text: #f2f1ed;
+    --text-secondary: #d8d6d0;
+    --text-muted: #b1b2b7;
     --accent: #2383e2;
-    --accent-hover: #0070d6;
-    --accent-bg: #eaf3fd;
-    --green: #0f7b6c;
-    --green-bg: #e6f6f2;
-    --amber: #d9730d;
-    --amber-bg: #fdf3e7;
-    --red: #e03e3e;
-    --red-bg: #fdeeee;
+    --accent-hover: #0077d4;
+    --accent-soft: #234259;
+    --accent-tint: #1e3649;
+    --green: #6ed6b8;
+    --green-soft: #1e4035;
+    --amber: #ffb769;
+    --amber-soft: #4c331e;
+    --red: #ff8080;
+    --red-soft: #4a2428;
     --radius-sm: 6px;
     --radius-md: 10px;
-    --radius-lg: 16px;
+    --radius-lg: 14px;
     --font-sans: 'Google Sans', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
     --font-mono: 'Cascadia Code', Consolas, 'SF Mono', monospace;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #151618;
-      --surface: #1e2024;
-      --surface-hover: #272a30;
-      --border: #2d3138;
-      --border-strong: #40454f;
-      --text: #f2f1ed;
-      --text-muted: #abaaa2;
-      --text-subtle: #75746f;
-      --accent: #3a97ff;
-      --accent-hover: #61adff;
-      --accent-bg: #172a40;
-      --green: #48c79c;
-      --green-bg: #143328;
-      --amber: #f89e43;
-      --amber-bg: #3b2512;
-      --red: #ff7878;
-      --red-bg: #3d1c1c;
-    }
+    --content-width: 1160px;
   }
 
   *, *::before, *::after {
@@ -93,6 +76,8 @@ const {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    scrollbar-color: var(--border-strong) var(--side);
+    scrollbar-width: thin;
   }
 
   body {
@@ -105,6 +90,16 @@ const {
   a {
     color: inherit;
     text-decoration: none;
+  }
+
+  ::selection {
+    color: var(--text);
+    background: rgba(35, 131, 226, 0.34);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
   }
 
   button, input, select {
